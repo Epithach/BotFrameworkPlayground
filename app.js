@@ -24,9 +24,46 @@ var bot = new builder.UniversalBot(connector, function (session) {
 var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
 bot.recognizer(recognizer);
 
+bot.dialog('ListeActeur', [
+    function (session) {
+        session.send("Alors comme ça tu veux la liste des acteurs ? Désolé elle est pas prête");
+    }
+]).triggerAction({
+    matches : "ListeActeur"
+});
+
+bot.dialog('ListeChanteur', [
+    function (session) {
+        session.send("Alors comme ça tu veux la liste des chanteurs ? Désolé elle est pas prête");
+    }
+]).triggerAction({
+    matches : "ListeChanteur"
+});
+
+bot.dialog('InfoArtiste', [
+    function(session, args) {
+        console.log("Args.intent.entities --->" + args.intent.entities + "<--")
+        console.log("--->" + args);
+        var personne = builder.EntityRecognizer.findEntity(args.intent.entities, 'ListeChanteur');
+        console.log("--->" + personne);
+        session.beginDialog("ArtistInformations", personne);
+    }
+]).triggerAction({
+    matches: "InfoArtiste"
+});
+
 bot.dialog('Aide', function (session) {
     console.log("test");
     session.endConversation("Bonjour ! Essayez quelque chose comme: \"Donne moi la liste des acteurs !\"");
 }).triggerAction({
     matches: "Aide"
 });
+
+bot.dialog("ArtistInformations", [
+    function(session, artistName) {
+        var message = 'Je me renseigne ...';
+        session.send(message);
+        session.endDialog(`${artistName} aime les pates à la bolognaise !`);
+    }
+
+]);
