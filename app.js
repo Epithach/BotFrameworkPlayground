@@ -29,7 +29,7 @@ bot.dialog('ListeActeur', [
         session.send("Alors comme ça tu veux la liste des acteurs ? Désolé elle est pas prête");
     }
 ]).triggerAction({
-    matches : "ListeActeur"
+    matches: "ListeActeur"
 });
 
 bot.dialog('ListeChanteur', [
@@ -37,19 +37,16 @@ bot.dialog('ListeChanteur', [
         session.send("Alors comme ça tu veux la liste des chanteurs ? Désolé elle est pas prête");
     }
 ]).triggerAction({
-    matches : "ListeChanteur"
+    matches: "ListeChanteur"
 });
 
-bot.dialog('InfoArtiste', [
-    function(session, args) {
-        console.log("Args.intent.entities --->" + args.intent.entities + "<--")
-        console.log("--->" + args);
-        var personne = builder.EntityRecognizer.findEntity(args.intent.entities, 'ListeChanteur');
-        console.log("--->" + personne);
-        session.beginDialog("ArtistInformations", personne);
+bot.dialog('InfoChanteur', [
+    function (session, args) {
+        var personne = builder.EntityRecognizer.findEntity(args.intent.entities, 'Singer');
+        session.beginDialog("ArtistInformations", personne.entity);
     }
 ]).triggerAction({
-    matches: "InfoArtiste"
+    matches: "InfoChanteur"
 });
 
 bot.dialog('Aide', function (session) {
@@ -60,8 +57,8 @@ bot.dialog('Aide', function (session) {
 });
 
 bot.dialog("ArtistInformations", [
-    function(session, artistName) {
-        var message = 'Je me renseigne ...';
+    function (session, artistName) {
+        var message = 'Je me renseigne sur ce chanteur ...';
         session.send(message);
         session.endDialog(`${artistName} aime les pates à la bolognaise !`);
     }
